@@ -4,10 +4,16 @@ import path from 'path';
 import fs from 'fs';
 import { User, Meeting, Participant } from './types/generalTypes';
 import { randomUUID } from 'crypto';
+import { createServer } from "http";
+import { Server as SocketIOServer } from "socket.io";
+
+const port = Number(process.env.PORT) || 4000;
 
 
 const app = express();
-const port = Number(process.env.PORT) || 4000;
+
+const httpServer = createServer(app);
+const io = new SocketIOServer(httpServer);
 
 const databaseDir = path.resolve(__dirname, '../database');
 const usersFile = path.join(databaseDir, 'users.json');
