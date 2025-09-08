@@ -6,14 +6,15 @@ import { User, Meeting, Participant } from './types/generalTypes';
 import { randomUUID } from 'crypto';
 import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
+import { SocketService } from "./services/socketService";
 
 const port = Number(process.env.PORT) || 4000;
-
 
 const app = express();
 
 const httpServer = createServer(app);
-const io = new SocketIOServer(httpServer);
+
+new SocketService(httpServer);
 
 const databaseDir = path.resolve(__dirname, '../database');
 const usersFile = path.join(databaseDir, 'users.json');
@@ -110,6 +111,6 @@ app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-app.listen(port, () => {
+httpServer.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });

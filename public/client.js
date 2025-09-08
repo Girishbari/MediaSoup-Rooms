@@ -6,27 +6,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const connectRoomButton = document.getElementById("connectRoomBtn");
   const createRoomButton = document.getElementById("createRoom");
 
+  const socket = io();
+
   if (createRoomButton) {
     createRoomButton.addEventListener("click", async () => {
-      try {
-        const resp = await fetch("/stream", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username: "test",
-            gmail: "test@gmail.com",
-          }),
-        });
-        const data = await resp.json();
-        console.log("Create room response", data);
-        alert(`Created room: ${data.roomId}`);
-      } catch (err) {
-        console.error(err);
-        alert("Failed to create room");
-      } finally {
-        connectPanel.style.display = "hidden";
-        roomNameInput.focus();
-      }
+      socket.emit("createRoom", { roomId: "my-room-123" }, (response) => {
+        if (response.error) {
+          console.error("Room creation failed:", response.error);
+        } else {
+          console.log("Room created:", response.message);
+        }
+      });
     });
   }
 
@@ -63,19 +53,13 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Please enter a room name");
         return;
       }
-      try {
-        const resp = await fetch("/stream", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: "test", gmail: "test@gmail.com" }),
-        });
-        const data = await resp.json();
-        console.log("Connect response", data);
-        alert(`Connected to room: ${data.roomId || roomName}`);
-      } catch (err) {
-        console.error(err);
-        alert("Failed to connect to room");
-      }
+      socket.emit("joinRoom", { roomId: "my-room-123" }, (response) => {
+        if (response.error) {
+          console.error("Room creation failed:", response.error);
+        } else {
+          console.log("Room created:", response.message);
+        }
+      });
     });
   }
 });
